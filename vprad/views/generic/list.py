@@ -69,13 +69,13 @@ class VEmbeddableListView(VEmbeddableMixin, VListViewBase):
     def create_url(self):
         try:
             return reverse(get_model_url_name(self.model, 'create')) + '?%s=%s' % (self.filter_attr,
-                                                                                   self.parent.pk)
+                                                                                   self.parent_object.pk)
         except NoReverseMatch:
             return ''
 
     def moreinfo_url(self):
         try:
             return reverse(get_model_url_name(self.model, 'list')) + '?%s=%s' % (self.filter_attr,
-                                                                                 self.parent.pk)
+                                                                                 self.parent_object.pk)
         except NoReverseMatch as e:
             return ''
