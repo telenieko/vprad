@@ -33,7 +33,8 @@
             <div class="ui bottom attached segment"
                  ic-get-from="{{ embed.embed_url() }}"
                  ic-trigger-on="scrolled-into-view"
-                 ic-on-error="$(elt).find('> div').toggleClass('hidden');">
+                 ic-on-error="$(elt).find('> div').toggleClass('hidden');"
+                 ic-replace-target="true">
                 <div class="ui info message">
                     {% trans %}Loading content.{% endtrans %}
                 </div>

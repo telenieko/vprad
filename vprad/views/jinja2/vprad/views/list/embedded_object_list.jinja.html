@@ -1,3 +1,6 @@
 {# Shows a list/table of objects embedded into another thing. #}
+{% extends "vprad/views/embedded_object_base.html" %}
 
+{% block middle_inner %}
 {{ table.as_html(request) }}
+{% endblock %}

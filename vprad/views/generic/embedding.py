@@ -76,6 +76,10 @@ class VEmbeddableMixin:
             raise ValueError("Don't know how to create embeddable for field %s in %s" % (field_name, cls))
         return type(view_class)(class_name, (view_class,), attrs)
 
+    def get_context_data(self, **kwargs):
+        kwargs['embed'] = self
+        return super().get_context_data(**kwargs)
+
     @classmethod
     def embed_url(cls):
         return '?%s=%s' % (EMBEDDABLE_GET_PARAM, cls.name)
