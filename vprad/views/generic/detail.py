@@ -14,6 +14,7 @@ from django.shortcuts import render
 from django.urls import reverse, NoReverseMatch
 from django.views.generic import DetailView
 
+from vprad.actions import actions_registry, ActionDoesNotExist
 from vprad.helpers import get_url_for
 from vprad.views.generic.embedding import VEmbeddableMixin, VEmbeddingMixin
 from vprad.views.generic.mixin import FieldsAttrMixin, ModelDataMixin
@@ -60,9 +61,9 @@ class VEmbeddableDetailView(VEmbeddableMixin, VDetailViewBase):
         # TODO: urlencode
         next_url = self.request.path
         try:
-            url = reverse(get_model_url_name(self.model, 'create'))
-            return url + f"?_method-{self.attr}={self.parent_object.pk}&next={next_url}"
-        except NoReverseMatch:
+            # TODO: check that the create action is available
+            return actions_registry.find_cls_action(self.model, 'create').get_absolute_url(next_url=next_url)
+        except ActionDoesNotExist:
             return ''
 
     def moreinfo_url(self):
