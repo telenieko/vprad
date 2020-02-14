@@ -1,0 +1,56 @@
+[tool.poetry]
+name = "vprad"
+version = "0.1.0"
+license = "BSD-3-Clause"
+description = "Very Pythonic Rapid Application Development"
+authors = ["Marc Fargas <telenieko@telenieko.com>"]
+readme = 'README.rst'
+homepage = 'https://github.com/telenieko/vprad'
+repository = 'https://github.com/telenieko/metanube_i4'
+keywords = ["django", "rad", "gui", "html"]
+classifiers = [
+  "Framework :: Django",
+  "Framework :: Django :: 3.0",
+  "Environment :: Web Environment",
+  "Topic :: Software Development :: Libraries :: Python Modules",
+  "Topic :: Software Development :: Libraries :: Application Frameworks",
+  "Topic :: Software Development :: User Interfaces",
+  "Topic :: Database :: Front-Ends",
+  "Development Status :: 3 - Alpha",
+  "Intended Audience :: Developers",
+  "Topic :: Internet :: WWW/HTTP",
+  "Topic :: Internet :: WWW/HTTP :: Dynamic Content",
+  "Topic :: Internet :: WWW/HTTP :: WSGI :: Application",
+  "Topic :: Office/Business",
+]
+
+[tool.poetry.dependencies]
+python = "^3.7"
+attrs = "^19.3.0"
+Jinja2 = "^2.11.1"
+django = "^3.0.3"
+django-environ = "^0.4.5"
+django-model-utils = "^4.0.0"
+django-allauth = "^0.41.0"
+django-tables2 = "^2.2.1"
+django-filter = "^2.2.0"
+django-select2 = "^7.2.0"
+django-braces = "^1.14.0"
+bleach = "^3.1.0"
+
+[tool.poetry.dev-dependencies]
+pytest = "^5.3.5"
+pytest-html = "^2.0.1"
+pytest-cov = "^2.8.1"
+pytest-selenium = "^1.17.0"
+pytest-localserver = "^0.5.0"
+django-debug-toolbar = "^2.2"
+factory-boy = "^2.12.0"
+pytest-django = "^3.8.0"
+pytest-pythonpath = "^0.7.3"
+pytest-mock = "^2.0.0"
+pytest-ordering = "^0.6"
+
+[build-system]
+requires = ["poetry>=0.12"]
+build-backend = "poetry.masonry.api"

@@ -1,0 +1,124 @@
+{% extends "fomanticui/base.html" %}
+{% load render i18n comments activity_tags %}
+{% comment %}
+Basic object detail template.
+Context:
+    - `object`: Model, The object which detail is being shown
+    - `sub_header`: str, The contents of the subheader (if any)
+    - `icon`: str, the icon class shown (top left).
+    - `can_star`: bool, wether a start for follow/unfollow is displayed
+    - `left_fields`: List[str], Fields shown, as a table, in the top left corner
+    - `right_fields`: List[str], Fields shown as a table, in the top right corner
+Blocks:
+    - sub_header: Contents of the sub_header (defaults to {{ sub_header }})
+    - topleft: Contains the top right details table
+        - topleft_intable: inside the topleft table.tobdy
+        - topleft_after_details: Just below the details table.
+    - topright: Contains the top right details table
+        - topright_after_details: Just below the details table.
+
+    - history: bottom area where comments and activity stream show up
+        - comments: comments area
+        - activity_stream: activity stream
+{%  endcomment %}
+
+{% block content %}
+    <div class="ui text container">
+        <h1 class="ui header">
+            <i class="{{ icon|default:'expand'}} icon"></i>
+            <div class="content">{{ object }}
+                {% if sub_header %}
+                    <div class="sub header">
+                        {% block sub_header %}{{ sub_header|default:"" }}{% endblock %}
+                        {% if can_star %}
+                            {% include "fomanticui/partials/actstream_star.html" with user=request.user target=object %}
+                        {% endif %}
+                    </div>
+                {% endif %}
+            </div>
+        </h1>
+    </div>
+    <div class="ui divider"></div>
+    <div class="ui container">
+        <div class="ui grid">
+            <!-- region: Top left details -->
+            <div class="sixteen wide mobile eight wide tablet eight wide computer column">
+                <div class="ui bottom">
+                    {% block topleft %}
+                        <table class="ui definition table">
+                            <tbody>
+                            {% block topleft_intable %}
+                            {% endblock %}
+                            {% fields_as_table object left_fields%}
+                            </tbody>
+                        </table>
+                        {# Right below the details table #}
+                        {% block topleft_after_details %}
+                        {% endblock %}
+                    {% endblock %}
+                </div>
+            </div>
+            <!-- endregion: Top left details -->
+            <!-- region: Top right details -->
+            <div class="sixteen wide mobile eight wide tablet eight wide computer column">
+                <div class="ui bottom">
+                    {% block topright %}
+                        <table class="ui definition table">
+                            <tbody>
+                            {% fields_as_table object right_fields%}
+                            </tbody>
+                        </table>
+                        {# Right below the details table #}
+                        {% block topright_after_details %}
+                        {% endblock %}
+                    {% endblock %}
+                </div>
+            </div>
+            <!-- endregion: Top right -->
+            {% if actions_count >= 0 %}
+                <div class="ui centered row">
+                    <div class="sixteen wide column">
+                        {% for ba in actions %}
+                            <a href="{{ ba.get_absolute_url }}" class="ui button">
+                                {% if ba.icon %}<i class="icon {{ ba.icon }}"></i>{% endif %}
+                                {{ ba.verbose_name }}
+                            </a>
+                        {% endfor %}
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+    
+        <!-- region: Comments block -->
+        {% block history %}
+            <div class="ui grid">
+                {% block comments %}
+                    <div class="sixteen wide mobile eight wide tablet eight wide computer column">
+                        {% get_comment_count for object as comment_count %}
+                        {% render_comment_list for object %}
+                    </div>
+                {% endblock %}
+                {% block activity_stream %}
+                    <div class="sixteen wide mobile eight wide tablet eight wide computer column">
+                        <h3 class="ui dividing header">{% trans 'Activity' %}</h3>
+                        {% activity_stream 'target' object %}
+                        {% for action in stream %}
+                            {% display_action action %}
+                        {% endfor %}
+                    </div>
+                {% endblock %}
+            </div>
+        {% endblock %}
+        <!-- endregion -->
+    </div> <!-- ui container -->
+{% endblock %}
+
+{% block bodybottom %}
+    {{ block.super }}
+    <script type="text/javascript">
+        $().ready(function() {
+            $('#ids-tabs .item').tab();
+            $('#detailer-main .item').tab();
+        });
+    </script>
+{% endblock %}

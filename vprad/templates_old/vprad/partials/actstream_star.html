@@ -1,0 +1,15 @@
+{% load activity_tags %}
+{% comment %}
+Simple template that outputs a outlined or filled star
+signalling wether the `user` follows the `target` and
+allows to click to follow/unfollow
+{% endcomment %}
+<a ic-post-to="{% follow_url target %}"
+    ic-trigger-on="click once"
+    ic-on-success="$(elt).children('i').toggleClass('outline');">
+    {% if user|is_following:target %}
+        <i class="yellow star icon"></i>
+    {% else %}
+        <i class="yellow star outline icon"></i>
+    {% endif %}
+</a>

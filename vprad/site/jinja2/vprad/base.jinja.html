@@ -1,0 +1,44 @@
+{% extends "vprad/layout/_base.jinja.html" %}
+{# Basic layout with a top menu and a collapsible left sidebar menu controlled
+   from the top menu "Menu" button. #}
+{% block extracss %}
+{% endblock %}
+
+{% block body %}
+    <!-- BEGIN Sidebar -->
+    <div class="ui sidebar vertical left accordion menu" id="sidebar-menu">
+        {% include "vprad/layout/_left_menu.jinja.html" %}
+    </div>
+
+    <div class="pusher">
+    <header class="ui top attached stackable menu" id="top-menu">
+        {% include "vprad/layout/_top_menu.jinja.html" %}
+    </header>
+
+    <!-- BEGIN Content -->
+    <div id="content-container" class="ui container">
+    {% block content %}
+        <div class="ui  vertical masthead center aligned segment">
+            <div class="ui text container">
+                <h1 class="ui header">Build something amazing.
+                </h1>
+                <p>Do whatever you want when you want to.</p>
+            </div>
+        </div>
+    {% endblock %}
+    </div>
+
+    <!-- BEGIN footer -->
+    <footer class="ui vertical footer">
+        <div class="ui horizontal small center aligned container">
+      <span  class="ui small text">
+        {% set render_time = now()|format_value %}
+        {% set user = get_request_user(request) %}
+          {% trans %}
+              Page generated on {{ render_time }} for {{ user }}
+          {% endtrans %}
+      </span>
+        </div>
+    </footer>
+    </div>
+{% endblock %}

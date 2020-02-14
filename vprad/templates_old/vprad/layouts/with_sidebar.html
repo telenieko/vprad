@@ -1,0 +1,50 @@
+{% extends "fomanticui/_base.html" %}
+{% load i18n %}
+{% comment %}
+    Basic layout with a top menu and a collapsible left sidebar menu controlled
+    from the top menu "Menu" button.
+{% endcomment %}
+
+{% block extracss %}
+    <style type="text/css">
+       #content-container { margin-top: 2em; margin-bottom: 2em; }
+    </style>
+{% endblock %}
+
+{% block body %}
+    <!-- BEGIN Sidebar -->
+    <div class="ui sidebar vertical left accordion menu" id="sidebar-menu">
+        {% include "fomanticui/layouts/_left_menu.html" %}
+    </div>
+
+    <div class="pusher">
+    <header class="ui top attached stackable menu" id="top-menu">
+        {% include "fomanticui/layouts/_top_menu.html" %}
+    </header>
+
+    <!-- BEGIN Content -->
+    <div id="content-container" class="ui container">
+    {% block content %}
+        <div class="ui  vertical masthead center aligned segment">
+            <div class="ui text container">
+                <h1 class="ui header">Build something amazing.
+                </h1>
+                <p>Do whatever you want when you want to.</p>
+            </div>
+        </div>
+    {% endblock %}
+    </div>
+
+    <!-- BEGIN footer -->
+    <footer class="ui vertical footer">
+        <div class="ui horizontal small center aligned container">
+      <span  class="ui small text">
+        {% now "j F Y H:i" as render_datetime %}
+          {% blocktrans %}
+              Page generated on {{ render_datetime }} for {{ user }}
+          {% endblocktrans %}
+      </span>
+        </div>
+    </footer>
+    </div>
+{% endblock %}

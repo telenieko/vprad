@@ -1,0 +1,142 @@
+{% load i18n static %}
+{# This is the left sidebar menu for layouts that have such a thing #}
+<div class="item center aligned">
+    <img class="ui small image" src="{% static 'brand/logo_light.png' %}">
+</div>
+
+<div class="item">
+    <a class="title" href="{% url 'home' %}">
+        <i class="home icon"></i> {% trans 'Home' %}</a>
+</div>
+
+<div class="item">
+    <a class="title">
+        <i class="address book icon"></i>
+        <span class="header">{% trans 'Contactos' %}</span>
+    </a>
+
+    <div class="content menu">
+        <form method="get" action="{% url 'contact_list' %}">
+            <div class="item">
+                <div class="ui icon input">
+                    <input type="text" name="text" placeholder="{% trans 'Buscar...' %}">
+                    <i class="search link icon"></i>
+                </div>
+            </div>
+        </form>
+        <a class="item" href="{% url 'contact_list_mine' %}">{% trans 'Mis contactos' %}</a>
+        <a class="item" href="{% url 'contact_list' %}">{% trans 'Contactos' %}</a>
+        <a class="item"><s>{% trans 'Clientes' %}</s></a>
+        <a class="item"><s>{% trans 'Nuevo contacto' %}</s></a>
+    </div>
+</div>
+
+<div class="item">
+    <a class="title">
+        <i class="briefcase icon"></i>
+        <span class="header">{% trans 'Expedientes' %}</span>
+    </a>
+    <div class="content menu">
+        <form method="get" action="{% url 'case_list' %}">
+            <div class="item">
+                <div class="ui icon input">
+                    <input type="text" name="text" placeholder="{% trans 'Buscar...' %}">
+                    <i class="search link icon"></i>
+                </div>
+            </div>
+        </form>
+        <a class="item" href="{% url 'case_list_mine' %}?include_closed=false">{% trans 'Mis Expedientes' %}</a>
+        <a class="item" href="{% url 'case_list' %}?include_closed=false">{% trans 'Expedientes' %}</a>
+        <a class="item" href="{% url 'action' 'src.we.cases.models.Case.create_new_case' %}">{% trans 'Nuevo Expediente' %}</a>
+    </div>
+</div>
+
+<div class="item">
+    <a class="title">
+        <i class="file contract icon"></i>
+        <span class="header">{% trans 'Escrituras' %}</span>
+
+    </a>
+    <div class="content menu">
+        <form method="get" action="{% url 'deed_list' %}">
+            <div class="item">
+                <div class="ui icon input">
+                    <input type="text" name="text" placeholder="{% trans 'Buscar...' %}">
+                    <i class="search link icon"></i>
+                </div>
+            </div>
+        </form>
+        <a class="item" href="{% url 'deed_list_mine' %}?include_closed=false">{% trans 'Mis Escrituras' %}</a>
+        <a class="item" href="{% url 'deed_list' %}?include_closed=false">{% trans 'Escrituras' %}</a>
+        <a class="item" href="{% url 'action' 'src.we.deeds.models.Deed.create_new_deed' %}">{% trans 'Nueva Escritura' %}</a>
+    </div>
+</div>
+
+
+<div class="item">
+    <a class="title">
+        <i class="tasks icon"></i>
+        <span class="header">{% trans 'Tareas' %}</span>
+
+    </a>
+    <div class="content menu">
+        <form method="get" action="{% url 'task_list' %}">
+            <div class="item">
+                <div class="ui icon input">
+                    <input type="text" name="text" placeholder="{% trans 'Buscar...' %}">
+                    <i class="search link icon"></i>
+                </div>
+            </div>
+        </form>
+        <a class="item" href="{% url 'task_list_mine' %}?include_closed=false">{% trans 'Mis tareas' %}</a>
+        <a class="item" href="{% url 'task_list' %}?include_closed=false">{% trans 'Tareas' %}</a>
+        <a class="item"><s>{% trans 'Nueva tarea' %}</s></a>
+    </div>
+</div>
+
+<div class="item">
+    <a class="title">
+        <i class="phone icon"></i>
+        <span class="header">{% trans 'Llamadas' %}</span>
+
+    </a>
+    <div class="content menu">
+        <form method="get" action="{% url 'call_list' %}">
+            <div class="item">
+                <div class="ui icon input">
+                    <input type="text" name="text" placeholder="{% trans 'Buscar...' %}">
+                    <i class="search link icon"></i>
+                </div>
+            </div>
+        </form>
+        <a class="item" href="{% url 'call_list_mine' %}?include_closed=false">{% trans 'Mis llamadas' %}</a>
+        <a class="item" href="{% url 'call_list' %}?include_closed=false">{% trans 'Llamadas' %}</a>
+        <a class="item"><s>{% trans 'Nueva llamada' %}</s></a>
+    </div>
+</div>
+
+{% comment %}
+<div class="item">
+    <a class="title">
+        <i class="hand holding usd icon"></i>
+        <span class="header">{% trans 'Administración' %}</span>
+    </a>
+    <div class="content menu">
+        <a class="item" href="{% url 'receivables_receivable_list' %}"><s>{% trans 'Efectos a cobrar' %}</s></a>
+    </div>
+</div>
+
+<div class="item">
+    <a class="title">
+        <i class="downward dropdown icon"></i>
+        <span class="header">{% trans 'IRPF' %}</span>
+    </a>
+    <div class="content menu">
+        <a class="item" href="{% url 'rentas_renta_create' %}">Alta nueva renta</a>
+        <a class="item" href="{% url 'rentas_renta_my' %}">Mis rentas</a>
+        <a class="item" href="{% url 'rentas_renta_list' %}">Todas las rentas</a>
+        <a class="item" href="{% url 'renta-pricing' %}">Tarifa actual</a>
+        <a class="item" href="{% url 'rentas_rentapricing_list' %}">Histórico tarifas</a>
+    </div>
+</div>
+{% endcomment %}

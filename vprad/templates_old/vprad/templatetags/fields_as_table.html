@@ -1,0 +1,7 @@
+{% load render %}
+{% for field_name in field_names %}
+    <tr>
+        <td>{{ object|get_field_name:field_name }}</td>
+        <td>{% format_value object field_name %}</td>
+    </tr>
+{% endfor %}

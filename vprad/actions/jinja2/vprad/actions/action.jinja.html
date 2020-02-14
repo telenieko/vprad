@@ -1,0 +1,38 @@
+{# Main view for Action handling.
+    see ActionView.#}
+{% extends "vprad/base.jinja.html" %}
+
+{% block content %}
+    <div class="ui grid">
+    <div class="sixteen wide column">
+        <h1 class="ui header">
+            <i class="play circle icon"></i>
+            <div class="content">{{ transition_name }}
+                <div class="sub header">{{ object }}</div>
+            </div>
+        </h1>
+
+        <form class="ui form" method="POST" enctype="multipart/form-data">
+            {{ csrf_input }}
+            {% for form_name, form in forms.items() %}
+                <h4 class="ui dividing header">{{ form.verbose_name|default(form_name) }}</h4>
+                {% if form.non_field_errors() %}
+                    <div class="ui form error">
+                        <div class="ui error message">
+                            <div class="header">{{ _('Error') }}</div>
+                            <ul class="list">
+                                {% for error in form.non_field_errors() %}
+                                    <li><strong>{{ error|escape }}</strong></li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                    </div>
+                {% endif %}
+                {{ form }}
+                {{ form.media }}
+            {% endfor %}
+
+            <input type="submit" formnovalidate class="ui submit button" />
+        </form>
+    </div>
+{% endblock %}

@@ -1,0 +1,25 @@
+{# Shows a list/table of objects
+    See, VListView. #}
+{% extends "vprad/base.jinja.html" %}
+
+{% block content %}
+  <div class="ui secondary pointing menu autotab">
+    <div class="item" data-tab="tab-table">
+      <i class="table icon"></i>{{ headline|default("list") }}</div>
+    <div class="right menu">
+      <div class="item" data-tab="tab-filter">
+        <i class="filter icon"></i>{{ _('Filter') }}</div>
+    </div>
+  </div>
+  <div class="ui tab" data-tab="tab-table">
+      {{ table.as_html(request) }}
+  </div>
+  <div class="ui tab" data-tab="tab-filter">
+    <form action="" method="get" class="ui form">
+      {{ filter.form }}
+      <input type="submit" class="ui button primary"/>
+      <a class="ui secondary button" href="{{ request.path }}">{{ _('Reset filter') }}</a>
+    </form>
+  </div>
+
+{% endblock %}

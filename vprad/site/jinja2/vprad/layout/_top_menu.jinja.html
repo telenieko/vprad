@@ -1,0 +1,23 @@
+{# This is the top menu, for layouts that have a menu at the top #}
+<a class="item" id="sidebar-menu-toggler">
+    <i class="sidebar icon"></i> {{ _('Menu') }}
+</a>
+
+<div class="right menu">
+    <div class="item">
+        <i class="clock icon"></i>
+    </div>
+    <a class="item" href="">
+        <i class="users circle icon"></i>
+    </a>
+    <div class="ui dropdown item">
+        <i class="user circle icon"></i>
+        <div class="menu">
+            <a class="item" href=""><s><i class="user secret icon"></i> {{ _('Change to...') }}</s></a>
+            <a class="item" href=""><s><i class="calendar alternate icon"></i> {{ _('My Calendar') }}</s></a>
+            <a class="item" href="{{ url('logout') }}"
+                id="top_menu_logout"><i class="sign out alternate icon"></i> {{ _('Logout') }}</a>
+        </div>
+    </div>
+
+</div>

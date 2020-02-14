@@ -1,0 +1,36 @@
+{% macro action_feed(actions) -%}
+    {# Displays a stream of actions from activity-stream. #}
+    <div class="ui feed">
+        {% for action in actions %}
+            {{ display_action(action) }}
+        {% endfor %}
+    </div>
+{%- endmacro %}
+
+{% macro display_action(action) -%}
+    {# Display a single action from activity-stream. #}
+    <div class="event">
+        <div class="label">
+            <i class="pencil icon"></i>
+        </div>
+        <div class="content">
+            <div class="date">{{ action.timestamp|timesince }} {{ _("ago") }}</div>
+            <div class="summary">
+                {% set actor_url = action.actor.get_absolute_url() or action.actor_url %}
+                <a class="user" href="{{ actor_url }}">{{ action.actor }}</a>:
+                {{ action.verb }}
+            </div>
+            <div class="extra text">
+                {% if action.action_object %}
+                    {% set object_url = action.action_object.get_absolute_url() or action.action_object_url %}
+                    <a href="{{ object_url }}">{{ action.action_object }}</a>
+                {% endif %}
+                {% if action.action_object and action.target %}to{% endif %}
+                {% if action.target %}
+                    {% set target_url = action.target.get_absolute_url() or action.target_url %}
+                    <a href="{{ target_url }}">{{ action.target }}</a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+{%- endmacro %}

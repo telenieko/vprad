@@ -1,0 +1,42 @@
+{% macro render_actions(object, actions, value) %}
+    {# Render the actions dropdown,
+        value is the value shown. #}
+    {% set next_url = get_current_url(request) %}
+    <div class="ui dropdown">
+        <div class="text">{{ value }}</div>
+        <i class="dropdown icon"></i>
+        <div class="menu">
+            {% for action in actions %}
+                <div class="item"><a href="{{ action.get_absolute_url(object, next_url) }}">{{ action.verbose_name }}</a></div>
+            {% endfor %}
+        </div>
+    </div>
+{%- endmacro %}
+
+{% macro render_fields(fields, object) -%}
+    {# Used below to render fields as a bunch of grid columns #}
+    {% if fields is string %}
+        {% set field = fields %}
+        <div class="column">
+            <h4 class="ui header">{{ object|attribute_name(field) }}</h4>
+            {# FIXME: we are relying on vprad.actions from vprad.views ... #}
+            {% set display_value = object|format_attribute(field) %}
+            {% set actions = get_instance_field_actions(object, request.user, field) %}
+            {% if actions|length %}
+                {{ render_actions(object, actions, display_value) }}
+            {% else %}
+                <p>{{ display_value }}</p>
+            {% endif %}
+        </div>
+    {% else %}
+        <div class="equal width row">
+            {% for field in fields %}
+                {{ render_fields(field, object) }}
+            {% endfor %}
+        </div>
+    {% endif %}
+{%- endmacro %}
+
+{% for field in fields %}
+    {{ render_fields(field, object) }}
+{% endfor %}

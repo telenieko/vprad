@@ -1,0 +1,11 @@
+{% extends "vprad/base.jinja.html" %}
+
+{% block content %}
+    <div class="ui divided grid">
+        <div class="eight wide column">
+            <h2 class="ui header">{{ _('Logout') }}</h2>
+            <p>{% trans %}You have been logged out.{% endtrans %}</p>
+            <p><a href="{{ url('home') }}">{{ _('Home') }}</a></p>
+        </div>
+    </div>
+{% endblock %}

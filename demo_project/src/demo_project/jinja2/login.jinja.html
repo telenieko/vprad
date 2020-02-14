@@ -1,0 +1,24 @@
+{% extends "vprad/base.jinja.html" %}
+
+{% block content %}
+    <div class="ui divided grid">
+        <div class="eight wide column">
+            <h2 class="ui header">Demo login</h2>
+            <p>Use any of the users below to login.</p>
+            <table class="ui celled table">
+                <thead>
+                    <tr><th>Username</th><th>Login</th></tr>
+                </thead>
+                <tbody>
+                    {% for user in users %}
+                        <tr>
+                            <td>{{ user.username }}</td>
+                            <td><a href="{{ url('login') }}?username={{ user.username }}&next={{ next }}">Login</a></td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            <p><a href="{{ url('home') }}">{{ _('Home') }}</a></p>
+        </div>
+    </div>
+{% endblock %}

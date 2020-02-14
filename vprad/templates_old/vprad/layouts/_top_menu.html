@@ -1,0 +1,35 @@
+{% load i18n static %}
+{# This is the top menu, for layouts that have a menu at the top #}
+<a class="item" id="sidebar-menu-toggler">
+    <i class="sidebar icon"></i> {% trans "Menu" %}
+</a>
+
+{% comment %}
+    This is pending. As we are on an included template, block override will not work
+    So breadcrumbs need to be managed by code somehow.
+    Or the very dirty hack of included template block override be brought here... which might be good.
+<div class="breadcrumb item">
+    {% block breadcrumb %}
+        <i class="right angle icon divider"></i>
+        <a class="section" href="{% url 'home' %}">Home</a>
+    {% endblock %}
+</div>
+{% endcomment %}
+
+<div class="right menu">
+    <div class="item">
+        <i class="clock icon"></i>
+    </div>
+    <a class="item" href="">
+        <i class="users circle icon"></i>
+    </a>
+    <div class="ui dropdown item">
+        <i class="user circle icon"></i>
+        <div class="menu">
+            <a class="item" href=""><s><i class="user secret icon"></i> {% trans 'Change to...' %}</s></a>
+            <a class="item" href=""><s><i class="calendar alternate icon"></i> {% trans 'My Calendar' %}</s></a>
+            <a class="item" href="{% url 'account_logout' %}"><i class="sign out alternate icon"></i> {% trans 'Logout' %}</a>
+        </div>
+    </div>
+
+</div>

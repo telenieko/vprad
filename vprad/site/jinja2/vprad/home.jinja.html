@@ -1,0 +1,41 @@
+{% extends "vprad/base.jinja.html" %}
+{% import 'vprad/macros/actstream.html' as actstream %}
+
+{% block content %}
+    <div class="ui divided grid">
+        <div class="eight wide column">
+            <h2 class="ui header">{{ _('Favourites') }}
+                <span data-tooltip="{{ _('See items for which you clicked the star') }}"
+                      data-position="top left">
+                    <i class="info circle icon small"></i></span>
+            </h2>
+            <p></p>
+            {% for model_name, items in starred.items() %}
+                <h3 class="ui header">{{ model_name }}</h3>
+                {# TODO: Make this use the item card #}
+                <div class="ui bulleted list">
+                    {% for object in items %}
+                        <div class="item">
+                            <a href="{{ object.get_absolute_url }}">
+                                {{ object }}</a>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="ui info message">
+                {% trans %}Here we show the items you have starred. You can star objects
+                by clicking the star icon next to them in multiple places (like the object list page).
+                {% endtrans %}
+                </div>
+            {% endfor %}
+        </div>
+        <div class="eight wide column">
+            <h2 class="ui header">{{ _('What matters to you') }}
+                    <span data-tooltip="{{ _('See the latest on your starred items') }}"
+                      data-position="top left">
+                    <i class="info circle icon small"></i></span>
+            </h2>
+            actstream.action_feed(user_stream)
+        </div>
+    </div>
+{% endblock %}

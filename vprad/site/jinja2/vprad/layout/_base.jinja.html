@@ -1,0 +1,48 @@
+{# Base template for loading semanticui, js, css, etc.
+   better to extend from base.jinja.html always.
+#}
+<!DOCTYPE html>
+<html lang="{{ get_current_language() }}">
+<head>
+    <!-- Standard Meta -->
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+
+    <link rel="shortcut icon" href="{{ static('brand/favicon512x512.png') }}" />
+    <link rel="apple-touch-icon" href="{{ static('brand/favicon512x512.png') }}" />
+
+    <title>{% block title %}{{ headline|default("No title") }}{% endblock %}</title>
+
+    <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/fomantic-ui@2.8.3/dist/semantic.min.css">
+    <link rel="stylesheet" href="{{ static('vprad/vprad.css') }}">
+    {% block extracss %}
+    {% endblock %}
+
+    <script src="//code.jquery.com/jquery-3.4.1.min.js"></script>
+    <script src="//cdn.jsdelivr.net/npm/fomantic-ui@2.8.3/dist/semantic.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/intercooler@1.2.3/dist/intercooler.min.js"></script>
+    <script src="{{ static('vprad/vprad.js') }}"></script>
+    {% block extrajs %}
+    {% endblock %}
+</head>
+<body>
+    {% block bodytop %}
+    {% endblock %}
+
+    {% block body %}
+        {% block content %}
+            <div class="ui  vertical masthead center aligned segment">
+                <div class="ui text container">
+                    <h1 class="ui header">Build something amazing.
+                    </h1>
+                    <p>Do whatever you want when you want to.</p>
+                </div>
+            </div>
+        {% endblock %}
+    {% endblock %}
+
+    {% block bodybottom %}
+    {% endblock %}
+</body>
+</html>

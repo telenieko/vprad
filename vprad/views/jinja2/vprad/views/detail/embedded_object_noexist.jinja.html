@@ -1,0 +1,13 @@
+{# Shows that an embeddable object does not exist
+    and offer to create if possible.#}
+<div class="ui placeholder  fitted segment">
+    <div class="ui icon header">
+        <i class="{{ get_icon_for(model) }} icon"></i>
+        {% trans %}
+            No related {{ verbose_name }} exists.
+        {% endtrans %}
+    </div>
+    {% if create_url %}
+            <a class="ui button" href="{{ create_url }}">{% trans %}Create{% endtrans %}</a>
+    {% endif %}
+</div>
