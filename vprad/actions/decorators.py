@@ -24,11 +24,11 @@ def register_action(name: str = None,
                     cls: t.Type = None,
                     **kwargs):
     if not conditions:
-        conditions = tuple()
+        conditions = set()
     elif not isinstance(conditions, collections.Iterable):
-        conditions = (conditions, )
+        conditions = {conditions, }
     else:
-        conditions = tuple(conditions)
+        conditions = set(conditions)
     if not icon:
         icon = get_icon_for()
 
@@ -63,7 +63,7 @@ def transition(model: t.Type[models.Model],
                verbose_name: str,
                attached_field: models.Field,
                source, target,
-               conditions: t.Union[t.Iterable[t.Callable], t.Callable] = None,
+               conditions: t.Union[t.Set[t.Callable], t.Callable] = None,
                icon: str = None):
     """ A transition is a specific kind of action.
 
@@ -72,11 +72,13 @@ def transition(model: t.Type[models.Model],
     If create_comment is True, a comment will be created.
     """
     if not isinstance(source, t.Iterable):
-        source = [source, ]
+        source = {source, }
     if not conditions:
-        conditions = []
+        conditions = set()
     elif not isinstance(conditions, t.Iterable):
-        conditions = [conditions, ]
+        conditions = {conditions, }
+    else:
+        conditions = set(conditions)
 
     def _condition(instance):
         return attached_field.value_from_object(instance) in source
@@ -84,7 +86,7 @@ def transition(model: t.Type[models.Model],
     if isinstance(attached_field, DeferredAttribute):
         attached_field = attached_field.field
 
-    conditions.append(_condition)
+    conditions.add(_condition)
     action_kw = {'cls': model,
                  'verbose_name': verbose_name,
                  'needs_instance': True,
@@ -134,7 +136,7 @@ def register_model_action(model: t.Type[models.Model],
                           icon: str = None,
                           takes_self: bool = True,
                           attached_field: models.Field = None,
-                          conditions: t.Union[t.Callable, t.Iterable[t.Callable]] = None):
+                          conditions: t.Union[t.Callable, t.Set[t.Callable]] = None):
     if not icon:
         icon = get_icon_for(model)
 

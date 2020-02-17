@@ -117,7 +117,7 @@ def test_conditions(actions):
                     full_name='test_conditions')(action_mock)
     action = actions_registry.find_action('test_conditions')
     assert action.function == action_mock
-    assert action.conditions[1] == has_weapons
+    assert has_weapons in action.conditions
 
     can_destroy.return_value = True
     has_weapons.return_value = True
