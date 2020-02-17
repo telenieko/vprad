@@ -5,6 +5,7 @@ import attr
 from attr.validators import instance_of as attr_instance_of, optional as attr_optional
 from django.db import models
 from django.db.models import Field
+from django.db.models.fields.related_descriptors import ForwardManyToOneDescriptor
 from django.shortcuts import resolve_url
 from django.urls import reverse
 
@@ -28,7 +29,8 @@ class Action:
                                    repr=True)
 
     cls: t.Type[models.Model] = attr.ib(repr=False, default=None)
-    attached_field: t.Optional[Field] = attr.ib(validator=attr_optional(attr_instance_of(Field)),
+    attached_field: t.Optional[Field] = attr.ib(validator=attr_optional(attr_instance_of((Field,
+                                                                                          ForwardManyToOneDescriptor))),
                                                 default=None)
 
     full_path: str = attr.ib(default=attr.Factory(
