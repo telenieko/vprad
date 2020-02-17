@@ -23,7 +23,7 @@ def filter_attribute_name(obj, attname):
         obj = getattr(obj, related_model)
     if isinstance(obj, models.Model):
         field = obj._meta.get_field(attname)
-        return field.verbose_name
+        return field.verbose_name if hasattr(field, 'verbose_name') else field.name
     return attname
 
 
