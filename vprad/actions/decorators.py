@@ -63,7 +63,7 @@ def transition(model: t.Type[models.Model],
                verbose_name: str,
                attached_field: models.Field,
                source, target,
-               conditions: t.List[t.Callable] = None,
+               conditions: t.Union[t.Iterable[t.Callable], t.Callable] = None,
                icon: str = None):
     """ A transition is a specific kind of action.
 
@@ -75,6 +75,8 @@ def transition(model: t.Type[models.Model],
         source = [source, ]
     if not conditions:
         conditions = []
+    elif not isinstance(conditions, t.Iterable):
+        conditions = [conditions, ]
 
     def _condition(instance):
         return attached_field.value_from_object(instance) in source
