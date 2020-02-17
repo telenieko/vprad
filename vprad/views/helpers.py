@@ -9,7 +9,7 @@ def get_model_url_name(model: t.Type[models.Model],
                        action: t.Union[str, ViewType] = None):
     n = "%s_%s" % (model._meta.app_label, model._meta.model_name,)
     if action:
-        n += "_%s" % action if isinstance(action, str) else action.value
+        n += "_%s" % (action if isinstance(action, str) else action.value)
     return n
 
 

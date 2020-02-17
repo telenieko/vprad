@@ -33,7 +33,7 @@ class ContactFilter(FilterSet):
         fields = ['contact_type', 'full_name', 'assignee']
 
 
-@register_model_view(model=Contact, view_type=ViewType.LIST, needs_instance=False)
+@register_model_view(model=Contact, view_type=ViewType.LIST)
 class ContactListView(SelectRelatedMixin,
                       VListView):
     table_class = ContactTable
@@ -62,6 +62,8 @@ class EmbeddedPostalAddress(VEmbeddableListView):
     filter_attr = 'contact'
 
 
+@register_model_view(model=ContactPhoneNumber,
+                     view_type=ViewType.EMBED_LIST)
 class EmbeddedPhoneNumber(VEmbeddableListView):
     name = 'phone_numbers'
     verbose_name = ContactPhoneNumber._meta.verbose_name
@@ -70,7 +72,7 @@ class EmbeddedPhoneNumber(VEmbeddableListView):
     include = ('number', )
 
 
-@register_model_view(model=Contact, view_type=ViewType.DETAIL, needs_instance=True)
+@register_model_view(model=Contact, view_type=ViewType.DETAIL)
 class ContactDetailView(SelectRelatedMixin,
                         VDetailView):
     model = Contact
@@ -90,7 +92,7 @@ def sample_view(request):
 
 
 # TODO: Temporary to check hamburger link in embedded list
-@register_model_view(model=ContactPostalAddress, view_type='list', needs_instance=False)
+@register_model_view(model=ContactPostalAddress, view_type='list')
 class PostalAddressListView(SelectRelatedMixin,
                             VListView):
     model = ContactPostalAddress

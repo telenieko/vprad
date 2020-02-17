@@ -15,13 +15,16 @@ model_views_registry = {}
 
 def register_model_view(*,
                         model: t.Type[models.Model],
-                        needs_instance: bool,
-                        view_type: t.Union[str, ViewType] = None,
+                        view_type: t.Union[str, ViewType],
+                        needs_instance: bool = None,
                         replace: str = None,
                         name: str = None):
     if not name:
         name = get_model_url_name(model, view_type)
     view_type = view_type.value if isinstance(view_type, ViewType) else view_type
+    if needs_instance is None:
+        needs_instance = not view_type.endswith('list')
+
     existing = model_views_registry.get(name, None)
     if existing and (not replace or existing.get_view_path() != replace):
         raise ValueError("A model view with name '%s' already registered" % name)
