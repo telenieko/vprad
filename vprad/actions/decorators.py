@@ -24,11 +24,11 @@ def register_action(name: str = None,
                     cls: t.Type = None,
                     **kwargs):
     if not conditions:
-        conditions = set()
+        conditions = tuple()
     elif not isinstance(conditions, collections.Iterable):
-        conditions = {conditions, }
+        conditions = (conditions, )
     else:
-        conditions = set(conditions)
+        conditions = tuple(conditions)
     if not icon:
         icon = get_icon_for()
 
@@ -72,13 +72,13 @@ def transition(model: t.Type[models.Model],
     If create_comment is True, a comment will be created.
     """
     if not isinstance(source, t.Iterable):
-        source = {source, }
+        source = (source, )
     if not conditions:
-        conditions = set()
+        conditions = tuple()
     elif not isinstance(conditions, t.Iterable):
-        conditions = {conditions, }
+        conditions = (conditions, )
     else:
-        conditions = set(conditions)
+        conditions = tuple(conditions)
 
     def _condition(instance):
         return attached_field.value_from_object(instance) in source
@@ -86,7 +86,7 @@ def transition(model: t.Type[models.Model],
     if isinstance(attached_field, DeferredAttribute):
         attached_field = attached_field.field
 
-    conditions.add(_condition)
+    conditions += (_condition, )
     action_kw = {'cls': model,
                  'verbose_name': verbose_name,
                  'needs_instance': True,
