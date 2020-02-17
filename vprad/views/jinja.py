@@ -4,6 +4,7 @@ import bleach
 from django.db import models
 from django.template.defaultfilters import safe
 
+from vprad.helpers import get_url_for
 from vprad.site.jinja import register_filter
 
 EMPTY_VALUE_DISPLAY = '--'
@@ -42,8 +43,10 @@ def filter_format_attribute(obj, attname):
     else:
         value = getattr(obj, attname)
     retval = filter_format_value(value)
-    if isinstance(value, models.Model) and hasattr(obj, 'get_absolute_url'):
-        retval = '<a href="%s">%s</a>' % (obj.get_absolute_url(), retval)
+    if isinstance(value, models.Model):
+        url = get_url_for(value)
+        if url:
+            retval = f'<a href="{url}">{retval}</a>'
     elif isinstance(field, models.URLField) and value != EMPTY_VALUE_DISPLAY:
         retval = '<a href="%s">%s</a>' % (value, value)
     return safe(retval)
