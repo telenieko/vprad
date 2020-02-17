@@ -45,16 +45,16 @@ class Action:
             return reverse(self.full_name, args=[instance.pk]) + (f"?next={next_url}" if next_url else '')
         return reverse(self.full_name) + (f"?next={next_url}" if next_url else '')
 
-    def check_conditions(self, cls=None, instance=None, user=None):
+    def check_conditions(self, cls=None, instance=None, **kwargs):
         if instance and not self.needs_instance:
             return False
         elif self.needs_instance and not instance:
             return False
-        ctx = {'user': user,
-               'action': self,
+        ctx = {'action': self,
                'cls': cls,
                'instance': instance,
                'self': instance}
+        ctx.update(kwargs)
         for c in self.conditions:
             if not call_with_context(c, **ctx):
                 return False

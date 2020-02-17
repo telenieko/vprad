@@ -69,12 +69,12 @@ class VActionsRegistry:
     def get_available_actions_for(self, *,
                                   cls=None,
                                   instance=None,
-                                  user=None,
+                                  request_user=None,
                                   attached_field: models.Field = '__all__'):
         for act in self.get_all_actions_for(cls=cls,
                                             instance=instance,
                                             attached_field=attached_field):
-            if act.check_conditions(cls=cls, instance=instance, user=user):
+            if act.check_conditions(cls=cls, instance=instance, request_user=request_user):
                 yield act
 
 

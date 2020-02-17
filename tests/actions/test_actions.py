@@ -101,10 +101,10 @@ def test_rogue_action(actions):
 
 
 def test_conditions(actions):
-    def destroy_world(world, weapon, user):
+    def destroy_world(world, weapon, request_user):
         return
 
-    def method(user):
+    def method(request_user):
         pass
 
     world = MagicMock()
@@ -121,7 +121,7 @@ def test_conditions(actions):
 
     can_destroy.return_value = True
     has_weapons.return_value = True
-    can = action.check_conditions(user=user)
+    can = action.check_conditions(request_user=user)
     can_destroy.assert_called_once_with(user)
     has_weapons.assert_called_once_with(user)
     assert can
@@ -129,7 +129,7 @@ def test_conditions(actions):
     has_weapons.reset_mock()
     can_destroy.reset_mock()
     can_destroy.return_value = False
-    can = action.check_conditions(user=user)
+    can = action.check_conditions(request_user=user)
     can_destroy.assert_called_once_with(user)
     has_weapons.assert_not_called()
     assert not can
@@ -164,7 +164,7 @@ def test_call(actions):
 
 
 def test_url(actions):
-    def destroy_world(world, weapon, user):
+    def destroy_world(world, weapon, request_user):
         return
 
     action_mock = create_autospec(destroy_world)

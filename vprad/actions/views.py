@@ -75,7 +75,7 @@ class ActionView(SetHeadlineMixin, SingleObjectMixin, TemplateView):
         if pk:
             self.object = self.get_object()
         action = self.action
-        if not action.check_conditions(instance=self.object, user=request.user):
+        if not action.check_conditions(instance=self.object, request_user=request.user):
             return HttpResponseForbidden("Action not available")
         self.helper = ActionViewHelper(action, self.object)
         self.init_forms()
