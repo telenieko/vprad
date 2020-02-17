@@ -79,7 +79,7 @@ class ContactDetailView(SelectRelatedMixin,
     select_related = ['assignee', ]
     embed_related = ('partner',
                      EmbeddedPostalAddress,
-                     EmbeddedPhoneNumber,
+                     'phone_numbers',
                      'email_addresses', )
     fields = (('full_name', 'contact_type'),
               ('assignee', 'language'),

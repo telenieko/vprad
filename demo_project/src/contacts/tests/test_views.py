@@ -4,6 +4,8 @@ import pytest
 from django.urls import reverse
 
 from src.contacts.tests.factories import PersonFactory
+from src.contacts.views import EmbeddedPhoneNumber, ContactDetailView
+from vprad.views.generic.detail import VDetailView
 
 
 @pytest.mark.selenium
@@ -32,3 +34,10 @@ def test_contact_detail_renders(user_client, db):
     contact = PersonFactory.create_batch(40)[0]
     resp = user_client.get(reverse('contacts_contact_detail', args=[contact.pk, ]))
     assert resp.status_code == 200
+
+
+def test_embedded_comes_from_registry(db):
+    """ Test that if an embedded view is in the registry it is used. """
+    view = ContactDetailView.as_view()
+    embed = view.view_class._embeddables['phone_numbers'].view_class
+    assert issubclass(embed, EmbeddedPhoneNumber)
