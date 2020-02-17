@@ -25,6 +25,10 @@ clean:  ## Cleanup your environment (deletes site_media/* !!)
 	mkdir _build/site_media
 	mkdir _build/staticfiles
 
+disclean: clean ## Clean much more than `clean`.
+	rm -rf .venv
+	rm -rf pip-wheel-metadata	
+
 resetdb:  ## Reset local database (dropdb, createdb, migrate, ...)
 	rm -f _build/demo_db.sqlite3
 	$(MANAGEPY) migrate
