@@ -21,13 +21,14 @@ shell: ## ./manage.py shell
 
 clean:  ## Cleanup your environment (deletes site_media/* !!)
 	find . -name '__pycache__' -o -name '*.py[cod]' -exec rm {} \;
-	rm -rf _build/*
-	mkdir _build/site_media
+	find . -name '_pytest_cache' -exec rm {} \;
+	rm -rf _build/* dist/
 	mkdir _build/staticfiles
 
-disclean: clean ## Clean much more than `clean`.
+distclean: clean ## Clean much more than `clean`.
 	rm -rf .venv
 	rm -rf pip-wheel-metadata	
+	find . -name '*.egg-info' -exec rm -rf {} \;
 
 resetdb:  ## Reset local database (dropdb, createdb, migrate, ...)
 	rm -f _build/demo_db.sqlite3
