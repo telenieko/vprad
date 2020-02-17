@@ -9,6 +9,7 @@ from vprad.views.generic.list import VListView, VEmbeddableListView
 from vprad.views.generic.detail import VDetailView
 from vprad.views.helpers import get_model_url_name
 from vprad.views.registry import register_model_view, register_view
+from vprad.views.types import ViewType
 
 
 class ContactTable(tables.Table):
@@ -32,7 +33,7 @@ class ContactFilter(FilterSet):
         fields = ['contact_type', 'full_name', 'assignee']
 
 
-@register_model_view(model=Contact, action='list', needs_instance=False)
+@register_model_view(model=Contact, view_type=ViewType.LIST, needs_instance=False)
 class ContactListView(SelectRelatedMixin,
                       VListView):
     table_class = ContactTable
@@ -69,7 +70,7 @@ class EmbeddedPhoneNumber(VEmbeddableListView):
     include = ('number', )
 
 
-@register_model_view(model=Contact, action='detail', needs_instance=True)
+@register_model_view(model=Contact, view_type=ViewType.DETAIL, needs_instance=True)
 class ContactDetailView(SelectRelatedMixin,
                         VDetailView):
     model = Contact
@@ -89,7 +90,7 @@ def sample_view(request):
 
 
 # TODO: Temporary to check hamburger link in embedded list
-@register_model_view(model=ContactPostalAddress, action='list', needs_instance=False)
+@register_model_view(model=ContactPostalAddress, view_type='list', needs_instance=False)
 class PostalAddressListView(SelectRelatedMixin,
                             VListView):
     model = ContactPostalAddress

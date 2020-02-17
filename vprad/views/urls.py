@@ -23,7 +23,6 @@ def get_views_urls():
     So, for a users.User, the url users_user_detail would be:
         /users/user/<pk>/detail
     """
-    print("HELLO")
     urlpatterns = []
     for name, vi in views_registry.items():
         for p in vi.urlpaths:
@@ -31,6 +30,8 @@ def get_views_urls():
                 path(p, vi.get_view(), name=vi.name)
             )
     for name, mvi in model_views_registry.items():
+        if not mvi.create_url:
+            continue
         action = mvi.name.split('_')[-1]
         urlpath = get_model_url_path(mvi.model,
                                      action,

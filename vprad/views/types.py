@@ -1,9 +1,17 @@
 import types
 import typing as t
+from enum import Enum
 
 import attr
 from django.db import models
 from django.views import View
+
+
+class ViewType(Enum):
+    LIST = 'list'
+    DETAIL = 'detail'
+    EMBED_LIST = 'embedded_list'
+    EMBED_DETAIL = 'embedded_detail'
 
 
 @attr.s(auto_attribs=True)
@@ -25,6 +33,7 @@ class ViewItem:
 class ModelViewItem:
     model: t.Type[models.Model]
     needs_instance: bool
+    create_url: bool
     name: str
     view: t.Union[types.FunctionType, View]
 
