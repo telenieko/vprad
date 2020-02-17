@@ -1,0 +1,54 @@
+name: Run Tests
+on: [push]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: [3.7, ]
+    steps:
+    - uses: actions/checkout@v2
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v1
+      with:
+        python-version: ${{ matrix.python-version }}
+    - name: Display Python version
+      run: python -c "import sys; print(sys.version)"
+    - name: Install Poetry
+      uses: dschep/install-poetry-action@v1.2
+    - name: Cache Poetry virtualenv
+      uses: actions/cache@v1
+      id: cache
+      with:
+        path: ~/.virtualenvs
+        key: poetry-${{ hashFiles('**/poetry.lock') }}
+        restore-keys: |
+          poetry-${{ hashFiles('**/poetry.lock') }}
+    - name: Set Poetry config
+      run: |
+        poetry config virtualenvs.in-project false
+        poetry config virtualenvs.path ~/.virtualenvs
+    - name: Install Dependencies
+      run: poetry install
+      if: steps.cache.outputs.cache-hit != 'true'
+    - name: Tests
+      env:
+          DJANGO_SECRET_KEY: x-aq=!)c!fukt3tqi28a%q5b8y_ug5ci&%8eub0ob&ay3vai3w
+          DJANGO_ENVIRONMENT: testing
+          DATABASE_URL: sqlite:///_build/test.sqlite3
+      run: |
+        make test
+    - name: Upload pytest test results
+      uses: actions/upload-artifact@master
+      with:
+        name: pytest-results-${{ matrix.python-version }}
+        path: _build/pytest/
+      if: always()
+    - name: Upload coverage report
+      uses: actions/upload-artifact@master
+      with:
+        name: coverage-${{ matrix.python-version }}
+        path: _build/coverage/
+      if: always()
+  
