@@ -62,7 +62,8 @@ class VEmbeddableDetailView(VEmbeddableMixin, VDetailViewBase):
         next_url = self.request.path
         try:
             # TODO: check that the create action is available
-            return actions_registry.find_cls_action(self.model, 'create').get_absolute_url(next_url=next_url)
+            url = actions_registry.find_cls_action(self.model, 'create').get_absolute_url(next_url=next_url)
+            return f"{url}&_method-{self.attr}={self.parent_object.pk}"
         except ActionDoesNotExist:
             return ''
 
