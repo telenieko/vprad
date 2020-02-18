@@ -1,5 +1,9 @@
 import logging
+import random
 import typing as t
+from collections import OrderedDict
+from inspect import isclass
+from itertools import chain
 
 from django.contrib.contenttypes.fields import GenericRelation
 from django.db import models
@@ -156,8 +160,14 @@ class VEmbeddingMixin:
     def _create_embed_related_views(cls,
                                     embeddable: t.Tuple[t.Union[str, t.Type[VEmbeddableMixin]]]):
         """ Create the appropiate VEmbeddable** classes. """
+        def _flat(embeds):
+            for e in embeds:
+                if isinstance(e, str) or (isclass(e) and issubclass(e, VEmbeddableMixin)):
+                    yield e
+                else:
+                    yield from _flat(e)
         retval = {}
-        for i in embeddable:
+        for i in _flat(embeddable):
             if isinstance(i, str):
                 view_class = VEmbeddableMixin.create_embed_related_for_field(cls.__name__, cls.model, i)
             elif issubclass(i, VEmbeddableMixin):
@@ -174,6 +184,18 @@ class VEmbeddingMixin:
         return retval
 
     def get_context_data(self, **kwargs):
-        kwargs['embed_related'] = [e.view_class for e in self._embeddables.values()]
+        def _inner(e):
+            r = tuple()
+            for i in e:
+                if isinstance(i, str):
+                    r += (self._embeddables[i].view_class, )
+                elif isclass(i) and issubclass(i, VEmbeddableMixin):
+                    r += (self._embeddables[i.name].view_class, )
+                elif isinstance(i, t.Iterable):
+                    r += (_inner(i), )
+                else:
+                    raise ValueError("Dont know how to proceed")
+            return r
+        kwargs['embed_blocks'] = _inner(self.embed_related)
         return super().get_context_data(**kwargs)
 

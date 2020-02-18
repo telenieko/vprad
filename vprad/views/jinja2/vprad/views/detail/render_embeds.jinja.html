@@ -1,0 +1,42 @@
+{% for embed_block in embed_blocks %}
+    <div class="ui container">
+    {% if not embed_block is iterable %}
+        {% set embed = embed_block %}
+        <div class="ui horizontal divider">
+            <i class="{{ get_icon_for(embed) }} icon"></i> {{ embed.verbose_name }}</div>
+        <div ic-trigger-on="load"
+             ic-get-from="{{ embed.embed_url() }}">
+            {{ embed }}
+        </div>
+    {% else %}
+        {% set block_id = "embed_container_" + uuid()|string %}
+        <div class="ui divider"></div>
+        <div class="ui top pointing secondary menu"
+             ic-switch-class="active"
+             ic-target="#{{ block_id }}"
+             ic-on-error="$('#embed-error-modal').modal('show');">
+            {% for embed in embed_block %}
+                <div class="header item"
+                     ic-get-from="{{ embed.embed_url() }}">
+                    <i class="{{ get_icon_for(embed) }} icon"></i>
+                    {{ embed.verbose_name }}
+                </div>
+            {% endfor %}
+        </div>
+        <div class="ui"
+             id="{{ block_id }}">
+            <div class="ui message">
+                {% trans %}Select an item from the bar above.{% endtrans %}
+            </div>
+        </div>
+    {% endif %}
+    </div>
+{% endfor %}
+
+<div class="hidden">
+    <div id="embed-error-modal" class="ui modal error message">
+        <div class="header">{% trans %}Could not load data{% endtrans %}
+        </div>
+        {% trans %}We could not load the related data, please try again.{% endtrans %}
+    </div>
+</div>

@@ -1,4 +1,5 @@
 from datetime import datetime, date
+from uuid import uuid4
 
 from django.contrib.messages import get_messages
 from django.templatetags.static import static
@@ -17,6 +18,7 @@ register_global(name='get_messages')(get_messages)
 register_global(name='get_current_language')(translation.get_language)
 register_global(name='get_icon_for')(get_icon_for)
 
+register_global(name='uuid')(uuid4)
 
 @register_global(name='get_request_user')
 def get_request_user(request):

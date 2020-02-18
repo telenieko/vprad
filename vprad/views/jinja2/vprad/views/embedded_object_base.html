@@ -1,20 +1,18 @@
 {% block middle_outer %}
-    <div class="ui attached segment">
-        {% block middle_inner %}
-        {% endblock %}
-    </div>
+    {% block middle_inner %}
+    {% endblock %}
 {% endblock %}
 
 {% block bottom_outer %}
-    <div class="ui bottom attached vertically fitted secondary segment">
+    <div class="ui center aligned container">
         {% block bottom_inner %}
             {% if embed.create_url() %}
-                <a class="item" href="{{ embed.create_url() }}" title="{{ _('Create') }}">
+                <a class="ui mini basic button" href="{{ embed.create_url() }}" title="{{ _('Create') }}">
                     <i class="fitted plus icon"></i>
                 </a>
             {% endif %}
             {% if embed.moreinfo_url() %}
-                <a class="item" href="{{ embed.moreinfo_url() }}" title="{{ _('More') }}">
+                <a class="ui mini basic button" href="{{ embed.moreinfo_url() }}" title="{{ _('More') }}">
                     <i class="fitted list icon"></i>
                 </a>
             {% endif %}

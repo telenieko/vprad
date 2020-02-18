@@ -4,17 +4,11 @@
 
 {% block middle_inner %}
     <div class="ui left aligned container">
-        <h3 class="ui header">
-            <i class="{{ get_icon_for(object) }} icon"></i>
-            <div class="content">{{ object }}</div>
-        </h3>
+        <div class="ui medium header"><u>{{ object }}</u></div>
     </div>
-    <div class="ui divider"></div>
-
     <div class="ui container">
         <div class="ui stackable {% if default_fields %}two column{% else %}equal width{% endif %} grid">
             {% include "vprad/views/detail/render_fields.jinja.html" with context %}
         </div>
     </div>
-</div>
 {% endblock %}

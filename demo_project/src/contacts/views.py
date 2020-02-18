@@ -4,7 +4,7 @@ from django.http import HttpResponse
 from django_filters import FilterSet
 import django_tables2 as tables
 
-from src.contacts.models import Contact, ContactPostalAddress, ContactPhoneNumber
+from src.contacts.models import Contact, ContactPostalAddress, ContactPhoneNumber, ContactEmailAddress
 from vprad.views.generic.list import VListView, VEmbeddableListView
 from vprad.views.generic.detail import VDetailView
 from vprad.views.helpers import get_model_url_name
@@ -56,7 +56,7 @@ class PostalAddressTable(tables.Table):
 
 class EmbeddedPostalAddress(VEmbeddableListView):
     name = 'postal_addresses'
-    verbose_name = ContactPostalAddress._meta.verbose_name
+    verbose_name = ContactPostalAddress._meta.verbose_name_plural
     model = ContactPostalAddress
     table_class = PostalAddressTable
     parent_field_name = 'postal_addresses'
@@ -78,9 +78,7 @@ class ContactDetailView(SelectRelatedMixin,
     model = Contact
     select_related = ['assignee', ]
     embed_related = ('partner',
-                     EmbeddedPostalAddress,
-                     'phone_numbers',
-                     'email_addresses', )
+                     (EmbeddedPostalAddress, 'phone_numbers', 'email_addresses'))
     fields = (('full_name', 'contact_type'),
               ('assignee', 'language'),
               'web_address')

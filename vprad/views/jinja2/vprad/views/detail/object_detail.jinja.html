@@ -20,30 +20,5 @@
         <div class="ui stackable {% if default_fields %}two column{% else %}equal width{% endif %} grid">
             {% include "vprad/views/detail/render_fields.jinja.html" with context %}
         </div></div>
-    <div class="ui divider"></div>
-
-    {% for embed in embed_related %}
-        <div class="ui container" id="embed_{{ embed.name }}">
-            <div class="ui top attached secondary menu">
-                <div class="header item">
-                    <i class="{{ get_icon_for(embed) }} icon"></i>
-                    {{ embed.verbose_name }}
-                </div>
-            </div>
-            <div class="ui bottom attached segment"
-                 ic-get-from="{{ embed.embed_url() }}"
-                 ic-trigger-on="scrolled-into-view"
-                 ic-on-error="$(elt).find('> div').toggleClass('hidden');"
-                 ic-replace-target="true">
-                <div class="ui info message">
-                    {% trans %}Loading content.{% endtrans %}
-                </div>
-                <div class="ui hidden error message">
-                    <div class="header">{% trans %}Could not load data{% endtrans %}
-                    </div>
-                    {% trans %}We could not load the related data, please try again.{% endtrans %}
-                </div>
-            </div>
-        </div>
-    {% endfor %}
+    {% include "vprad/views/detail/render_embeds.jinja.html" with context %}
 {% endblock %}
