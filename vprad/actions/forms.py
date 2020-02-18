@@ -9,6 +9,8 @@ from django.forms import forms, model_to_dict
 from django.forms.models import apply_limit_choices_to_to_formfield, ModelForm
 from django.utils.translation import gettext_lazy as _
 
+from vprad.models import AutocompleteMixin
+
 
 class ActionForm(forms.Form):
     verbose_name = _('Action')
@@ -62,8 +64,9 @@ class AnnotationFormFactory:
     # noinspection PyMethodMayBeStatic
     def _get_formfield(self, field: models.Field):
         kwargs = {}
-        # if isinstance(field, models.ForeignKey) and hasattr(field.related_model, 'get_default_fk_widget'):
-        #     kwargs['widget'] = field.related_model.get_default_fk_widget()
+        if isinstance(field, (models.ForeignKey,
+                              models.OneToOneField)) and issubclass(field.related_model, AutocompleteMixin):
+            kwargs['widget'] = field.related_model.get_fk_widget()
         formfield = field.formfield(**kwargs)
         apply_limit_choices_to_to_formfield(formfield)
         return formfield

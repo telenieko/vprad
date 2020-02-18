@@ -2,12 +2,14 @@ from django.contrib.auth import get_user_model
 from django.db import models
 from django.db.models.signals import pre_save
 from django.dispatch import receiver
-from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 from model_utils.models import TimeStampedModel, SoftDeletableModel
 
+from vprad.models import AutocompleteMixin
 
-class Contact(TimeStampedModel,
+
+class Contact(AutocompleteMixin,
+              TimeStampedModel,
               SoftDeletableModel,
               models.Model):
     class ContactType(models.TextChoices):
@@ -74,6 +76,10 @@ class Contact(TimeStampedModel,
         if update_fields is not None and 'first_name' not in update_fields and 'last_name' not in update_fields:
             return
         instance.full_name = instance._calc_full_name()
+
+    @classmethod
+    def get_search_fields(cls):
+        return 'full_name__icontains', 'web_address__icontains'
 
 
 class ContactMechAbstract(TimeStampedModel):

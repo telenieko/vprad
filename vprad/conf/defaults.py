@@ -26,6 +26,7 @@ THIRD_PARTY_APPS = [
     'debug_toolbar',
     'django_tables2',
     'django_filters',
+    'django_select2',
 ]
 VRAD_APPS = [
     'vprad.actions',
