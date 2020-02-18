@@ -1,12 +1,9 @@
 from django import forms
-from django.db import IntegrityError
-
-from vprad.actions import ActionNotAllowed
-from .forms import PartnerRejectform
-from .models import Partner
-from vprad.actions.decorators import transition, register_model_action
 from django.utils.translation import gettext_lazy as _
 
+from vprad.actions.decorators import transition, register_model_action
+from .forms import PartnerRejectform
+from .models import Partner
 from ..contacts.models import Contact
 
 
