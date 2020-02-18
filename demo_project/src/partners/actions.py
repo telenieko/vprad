@@ -1,16 +1,22 @@
 from django import forms
+from django.db import IntegrityError
 
+from vprad.actions import ActionNotAllowed
 from .forms import PartnerRejectform
 from .models import Partner
 from vprad.actions.decorators import transition, register_model_action
 from django.utils.translation import gettext_lazy as _
+
+from ..contacts.models import Contact
 
 
 @register_model_action(model=Partner,
                        name='create',
                        verbose_name=_('Create new partner'),
                        takes_self=False)
-def create_partner(request_user, contact):
+def create_partner(request_user,
+                   contact=forms.ModelChoiceField(queryset=Contact.objects.filter(partner__isnull=True),
+                                                  widget=Contact.get_fk_widget())):
     return Partner.objects.create(contact=contact)
 
 
