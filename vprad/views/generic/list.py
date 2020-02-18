@@ -4,9 +4,14 @@ from django.urls import reverse, NoReverseMatch
 from django_filters.views import FilterView
 from django_tables2 import Table
 
+from vprad.helpers import get_url_for
 from vprad.views.generic.embedding import VEmbeddableMixin
 from vprad.views.generic.mixin import FieldsAttrMixin, ModelDataMixin
 from vprad.views.helpers import get_model_url_name
+
+
+class VTableBase(Table):
+    id = tables.Column(linkify=lambda record: get_url_for(record))
 
 
 class VListViewBase(FieldsAttrMixin,
@@ -15,7 +20,7 @@ class VListViewBase(FieldsAttrMixin,
                     FilterView):
     template_name = 'vprad/views/list/object_list.html'
     paginate_by = 10
-    table_base = Table
+    table_base = VTableBase
 
     def get_table_class(self):
         """
@@ -40,7 +45,7 @@ class VListView(VListViewBase):
     pass
 
 
-class EmbeddedTableBase(Table):
+class EmbeddedTableBase(VTableBase):
     class Meta:
         orderable = False
         attrs = {
