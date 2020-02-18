@@ -53,17 +53,18 @@ class VEmbeddableDetailView(VEmbeddableMixin, VDetailViewBase):
 
     def get_object(self, queryset=None):
         try:
-            return getattr(self.parent_object, self.parent_attr)
+            return getattr(self.parent_object, self.parent_field_name)
         except ObjectDoesNotExist:
             raise Http404
 
     def create_url(self):
         # TODO: urlencode
         next_url = self.request.path
+        otherside = self.get_local_field_name()
         try:
             # TODO: check that the create action is available
             url = actions_registry.find_cls_action(self.model, 'create').get_absolute_url(next_url=next_url)
-            return f"{url}&_method-{self.attr}={self.parent_object.pk}"
+            return f"{url}&_method-{otherside}={self.parent_object.pk}"
         except ActionDoesNotExist:
             return ''
 

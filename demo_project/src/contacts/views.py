@@ -59,7 +59,7 @@ class EmbeddedPostalAddress(VEmbeddableListView):
     verbose_name = ContactPostalAddress._meta.verbose_name
     model = ContactPostalAddress
     table_class = PostalAddressTable
-    filter_attr = 'contact'
+    parent_field_name = 'postal_addresses'
 
 
 @register_model_view(model=ContactPhoneNumber,
@@ -68,7 +68,7 @@ class EmbeddedPhoneNumber(VEmbeddableListView):
     name = 'phone_numbers'
     verbose_name = ContactPhoneNumber._meta.verbose_name
     model = ContactPhoneNumber
-    filter_attr = 'contact'
+    parent_field = Contact.phone_numbers
     include = ('number', )
 
 

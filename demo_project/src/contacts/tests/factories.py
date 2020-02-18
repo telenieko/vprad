@@ -44,13 +44,13 @@ class ContactFactoryMixin(DjangoModelFactory):
     assignee = SubFactory(UserFactory)
 
     addresses = factory.RelatedFactoryList(PostalAddressFactory,
-                                           'contact',
+                                           'parent',
                                            size=3)
     numbers = factory.RelatedFactoryList(PhoneNumberFactory,
-                                         'contact',
+                                         'parent',
                                          size=4)
     emails = factory.RelatedFactoryList(EmailAddressFactory,
-                                        'contact',
+                                        'parent',
                                         size=5)
 
 

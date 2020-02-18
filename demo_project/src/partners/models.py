@@ -31,3 +31,6 @@ class Partner(TimeStampedModel):
     class Meta:
         verbose_name = _('Partner')
         verbose_name_plural = _('Partners')
+
+    def __str__(self):
+        return f"{self.contact.full_name}, {self.get_status_display()}"

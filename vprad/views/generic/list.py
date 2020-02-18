@@ -56,7 +56,7 @@ class VEmbeddableListView(VEmbeddableMixin, VListViewBase):
     object_limit = 15
 
     def get_queryset(self):
-        qs = super().get_queryset().filter(**{self.filter_attr: self.parent_object.pk})
+        qs = getattr(self.parent_object, self.parent_field_name).all()
         if self.object_limit:
             return qs[:self.object_limit]
         return qs
@@ -67,15 +67,17 @@ class VEmbeddableListView(VEmbeddableMixin, VListViewBase):
         return kwargs
 
     def create_url(self):
+        local = self.get_local_field_name()
         try:
-            return reverse(get_model_url_name(self.model, 'create')) + '?%s=%s' % (self.filter_attr,
+            return reverse(get_model_url_name(self.model, 'create')) + '?%s=%s' % (local,
                                                                                    self.parent_object.pk)
         except NoReverseMatch:
             return ''
 
     def moreinfo_url(self):
+        local = self.get_local_field_name()
         try:
-            return reverse(get_model_url_name(self.model, 'list')) + '?%s=%s' % (self.filter_attr,
+            return reverse(get_model_url_name(self.model, 'list')) + '?%s=%s' % (local,
                                                                                  self.parent_object.pk)
         except NoReverseMatch as e:
             return ''

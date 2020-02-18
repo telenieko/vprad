@@ -1,4 +1,6 @@
 from django.contrib.auth import get_user_model
+from django.contrib.contenttypes.fields import GenericForeignKey, GenericRelation
+from django.contrib.contenttypes.models import ContentType
 from django.db import models
 from django.db.models.signals import pre_save
 from django.dispatch import receiver
@@ -50,6 +52,9 @@ class Contact(AutocompleteMixin,
 
     web_address = models.URLField(blank=True, null=False, default="",
                                   verbose_name=_('Página web'))
+    postal_addresses = GenericRelation('ContactPostalAddress')
+    phone_numbers = GenericRelation('ContactPhoneNumber')
+    email_addresses = GenericRelation('ContactEmailAddress')
 
     class Meta:
         verbose_name = _('Contact')
@@ -83,7 +88,9 @@ class Contact(AutocompleteMixin,
 
 
 class ContactMechAbstract(TimeStampedModel):
-    contact = models.ForeignKey(Contact, on_delete=models.CASCADE)
+    content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
+    object_id = models.PositiveIntegerField()
+    parent = GenericForeignKey('content_type', 'object_id')
     is_active = models.BooleanField(default=True, null=False, verbose_name=_('Vigente'),
                                     help_text=_('Indica si el dato es vigente o no'))
     internal_note = models.TextField(null=False, blank=True, default='',

@@ -1,6 +1,7 @@
 import logging
 import typing as t
 
+from django.contrib.contenttypes.fields import GenericRelation
 from django.db import models
 from django.utils.decorators import classonlymethod
 from django.views import View
@@ -18,28 +19,41 @@ class VEmbeddableMixin:
     # Unique name for this embedable (within the same embedding view).
     # defaults to the name of the field.
     name: str = None
-    # Name to show as the embed title
-    verbose_name: str = None
+    verbose_name: str
     # Embedding object
-    parent_object: models.Model = None  # The model instance from the embedding view.
-    # The view that is calling us
-    # TODO: Consider removing this.
-    parent_view: View = None  # The embedding view instance
+    parent_object: models.Model = None # The model instance from the embedding view.
     # Our model.
-    model: models.Model
-    # Attribute of self.parent_object to get the embedded entity (ForeignKey)
-    parent_attr: str = None
-    # The field in this view's model to filter for equality with self.parent_object.pk
-    # used in ManyToOne.
-    filter_attr = None
-    # Attribute in self.model that holds the relationship to the parent_object
-    attr: str = None
+    model: models.Model = None
+    # The name of the field from which we were born,
+    # we don't store the field directly as that conflicts when putting GenericRelation
+    # on a class definition (fields do not appear to be fully ready at the time).
+    parent_field_name: str = None
+
+    def get_parent_field(self):
+        return self.parent_object._meta.get_field(self.parent_field_name)
+
+    def get_local_field_name(self):
+        """ Get the local field name of the relation. """
+        parent_field = self.get_parent_field()
+        try:
+            return parent_field.field.name
+        except AttributeError:
+            return parent_field.remote_field.name
 
     # noinspection PyUnresolvedReferences
     def dispatch(self, request, *args, **kwargs):
         if 'parent_object' in kwargs:
             self.parent_object = kwargs['parent_object']
         return super().dispatch(request, *args, **kwargs)
+
+    @staticmethod
+    def _get_verbose_name(field, plural: bool = False):
+        try:
+            return getattr(field, 'verbose_name')
+        except AttributeError:
+            if not plural:
+                return field.related_model._meta.verbose_name
+            return field.related_model._meta.verbose_name_plural
 
     @classmethod
     def create_embed_related_for_field(cls,
@@ -62,30 +76,31 @@ class VEmbeddableMixin:
         embedded_model = field.related_model
         attrs = {'name': field.name,
                  'model': field.related_model,
-                 'parent_attr': field.name,
-                 'filter_attr': field.field.name,
-                 'attr': field.remote_field.name}
+                 'parent_field_name': field.name}
+        if hasattr(field, 'field'):
+            attrs['exclude'] = (field.field.name,)
+        elif hasattr(field, 'from_fields'):
+            attrs['exclude'] = tuple(field.from_fields)
         class_name = embedding_name + "_%sEmbed" % field_name.title()
-        if isinstance(field, models.ForeignKey):
-            view_type = ViewType.EMBED_DETAIL
-            attrs['verbose_name'] = field.verbose_name
-        elif isinstance(field, models.OneToOneRel):
-            view_type = ViewType.EMBED_DETAIL
-            attrs['verbose_name'] = field.related_model._meta.verbose_name
-        elif isinstance(field, models.ManyToOneRel):
-            view_type = ViewType.EMBED_LIST
-            attrs['verbose_name'] = field.related_model._meta.verbose_name_plural
-            attrs['exclude'] = (field.field.name, )
+        if isinstance(field, (models.ForeignKey,
+                              models.OneToOneRel)) or (isinstance(field, GenericRelation) and field.one_to_one):
+            view_base = VEmbeddableDetailView
+        elif isinstance(field, (models.ManyToOneRel,
+                                GenericRelation)):
+            view_base = VEmbeddableListView
         else:
-            raise ValueError("Don't know how to create embeddable for field %s in %s" % (field_name, cls))
+            raise ValueError("Don't know how to create embeddable for field %s of type %s in %s" % (
+                field_name, field.__class__, cls))
+        view_type = ViewType.EMBED_DETAIL if issubclass(view_base, VEmbeddableDetailView) else ViewType.EMBED_LIST
 
         embedded_name = get_model_url_name(embedded_model, view_type)
-        default_view_class = VEmbeddableDetailView if view_type == ViewType.EMBED_DETAIL else VEmbeddableListView
         try:
-            view_class = model_views_registry[embedded_name].view
+            view_base = model_views_registry[embedded_name].view
         except KeyError:
-            view_class = default_view_class
-        return type(view_class)(class_name, (view_class,), attrs)
+            pass
+
+        attrs['verbose_name'] = cls._get_verbose_name(field, view_type == ViewType.EMBED_LIST)
+        return type(view_base)(class_name, (view_base,), attrs)
 
     def get_context_data(self, **kwargs):
         kwargs['embed'] = self
@@ -132,11 +147,6 @@ class VEmbeddingMixin:
     def _embed_related_default(cls, model: t.Type[models.Model]):
         """ Produce a default for cls.embed_related """
         embed = tuple()
-        for field in model._meta.fields:
-            if isinstance(field, models.ForeignKey):
-                # ForeignKeys are normally shown in the fields()
-                # embed += (field.name,)
-                pass
         for rel in model._meta.related_objects:
             if isinstance(rel, models.ManyToOneRel):
                 embed += (rel.name,)
@@ -151,13 +161,11 @@ class VEmbeddingMixin:
             if isinstance(i, str):
                 view_class = VEmbeddableMixin.create_embed_related_for_field(cls.__name__, cls.model, i)
             elif issubclass(i, VEmbeddableMixin):
-                view_class = i
                 assert i.name, "You must define %s.name" % i
                 assert i.verbose_name, "You must define %s.verbose_name" % i
-                if hasattr(i, 'model'):
-                    assert i.model, "You must define %s.model" % i
-                if hasattr(i, 'filter_attr'):
-                    assert i.filter_attr, "You must define %s.filter_attr" % i
+                assert i.model, "You must define %s.model" % i
+                assert i.parent_field_name, "You must define %s.parent_field_name" % i
+                view_class = i
             else:
                 raise ValueError("Don't know how to make embed_related=%s work" % i)
             url = '?%s=%s' % (EMBEDDABLE_GET_PARAM, view_class.name)
