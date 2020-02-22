@@ -81,6 +81,8 @@ def transition(model: t.Type[models.Model],
         conditions = tuple(conditions)
 
     def _condition(instance):
+        if source == '*':
+            return True
         return attached_field.value_from_object(instance) in source
 
     if isinstance(attached_field, DeferredAttribute):
