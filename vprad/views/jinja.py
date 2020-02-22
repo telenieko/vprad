@@ -1,6 +1,7 @@
 import datetime
-
+import typing as t
 import bleach
+from django.core.exceptions import FieldDoesNotExist
 from django.db import models
 from django.template.defaultfilters import safe
 
@@ -23,8 +24,11 @@ def filter_attribute_name(obj, attname):
         related_model, field_name = attname.split('__', 1)
         obj = getattr(obj, related_model)
     if isinstance(obj, models.Model):
-        field = obj._meta.get_field(attname)
-        return field.verbose_name if hasattr(field, 'verbose_name') else field.name
+        try:
+            field = obj._meta.get_field(attname)
+            return field.verbose_name if hasattr(field, 'verbose_name') else field.name
+        except FieldDoesNotExist:
+            pass
     return attname
 
 
@@ -32,7 +36,10 @@ def filter_attribute_name(obj, attname):
 def filter_format_attribute(obj, attname):
     """ Format the value of an object attribute, nicely for humans.
     """
-    field: models.Field = obj._meta.get_field(attname) if isinstance(obj, models.Model) else None
+    try:
+        field: t.Optional[models.Field] = obj._meta.get_field(attname) if isinstance(obj, models.Model) else None
+    except FieldDoesNotExist:
+        field = None
     if '__' in attname:
         related_model, field_name = attname.split('__', 1)
         obj = getattr(obj, related_model)
