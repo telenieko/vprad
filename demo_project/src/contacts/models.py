@@ -52,9 +52,12 @@ class Contact(AutocompleteMixin,
 
     web_address = models.URLField(blank=True, null=False, default="",
                                   verbose_name=_('Página web'))
-    postal_addresses = GenericRelation('ContactPostalAddress')
-    phone_numbers = GenericRelation('ContactPhoneNumber')
-    email_addresses = GenericRelation('ContactEmailAddress')
+    postal_addresses = GenericRelation('ContactPostalAddress',
+                                       verbose_name=_('Postal addresses'))
+    phone_numbers = GenericRelation('ContactPhoneNumber',
+                                    verbose_name=_('Phone numbers'))
+    email_addresses = GenericRelation('ContactEmailAddress',
+                                      verbose_name=_('E-mail addresses'))
 
     class Meta:
         verbose_name = _('Contact')
