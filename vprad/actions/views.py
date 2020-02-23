@@ -131,7 +131,7 @@ class ActionView(SetHeadlineMixin, SingleObjectMixin, TemplateView):
             one_invalid = not form.is_valid() or one_invalid
         if one_invalid:
             return self.forms_invalid()
-        return self.forms_valid() or redirect(self.get_next())
+        return redirect(self.forms_valid() or self.get_next())
 
     def get_context_data(self, **kwargs):
         kwargs['object'] = self.object

@@ -9,6 +9,7 @@ from django.forms import forms, model_to_dict
 from django.forms.models import apply_limit_choices_to_to_formfield, ModelForm
 from django.utils.translation import gettext_lazy as _
 
+from vprad.forms.fields import get_formfield_for_field
 from vprad.models import AutocompleteMixin
 
 
@@ -18,6 +19,7 @@ class ActionForm(forms.Form):
 
     def __init__(self, instance=None, *args, **kwargs):
         initial = kwargs.pop('initial') if 'initial' in kwargs else {}
+        print("xinitial ", initial)
         if instance is None:
             self.instance = None
         else:
@@ -61,16 +63,6 @@ class AnnotationFormFactory:
         self.extra_form_classes = self._get_extra_form_classes(params)
         self.form_class = self._get_action_form(params)
 
-    # noinspection PyMethodMayBeStatic
-    def _get_formfield(self, field: models.Field):
-        kwargs = {}
-        if isinstance(field, (models.ForeignKey,
-                              models.OneToOneField)) and issubclass(field.related_model, AutocompleteMixin):
-            kwargs['widget'] = field.related_model.get_fk_widget()
-        formfield = field.formfield(**kwargs)
-        apply_limit_choices_to_to_formfield(formfield)
-        return formfield
-
     def _field_parameters(self):
         cls = self.model
         method = self.method
@@ -91,7 +83,7 @@ class AnnotationFormFactory:
                                                                ModelForm)):
                 params[name] = ptype
             elif name in model_fields:
-                formfield = self._get_formfield(model_fields[name])
+                formfield = get_formfield_for_field(model_fields[name])
                 if data.default != data.empty:
                     formfield.initial = data.default() if callable(data.default) else data.default
                     formfield.required = False

@@ -9,6 +9,7 @@ from os.path import relpath
 from typing import Sequence
 
 from django.apps import AppConfig
+from django.core.exceptions import FieldDoesNotExist
 from django.db import models
 from django.urls import reverse, NoReverseMatch, clear_url_caches as _clear_url_caches
 from django.utils.module_loading import module_has_submodule
@@ -151,3 +152,18 @@ def clear_url_caches():
     actions_urls.urlpatterns.reset_cache()
     views_urls.urlpatterns.reset_cache()
     _clear_url_caches()
+
+
+def get_generic_foreign_key(fk_field):
+    """ Get the GenericForeignKey field of a model from its other fields.
+
+    This is basicaly to be able to get to the GenericForeignKey from the GenericRelation,
+    as the last one only keeps track of ct_field & pk_field
+    """
+    from django.contrib.contenttypes.fields import GenericForeignKey
+    model = fk_field.model
+    for gfk in list(filter(lambda f: isinstance(f, GenericForeignKey), model._meta.get_fields())):
+        if gfk.fk_field == fk_field.name:
+            return gfk
+    raise FieldDoesNotExist("No GenericForeignKey field found for %s" % fk_field)
+

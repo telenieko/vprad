@@ -13,6 +13,7 @@ from django.utils.decorators import classonlymethod
 from django.views import View
 
 from vprad.actions import actions_registry, ActionDoesNotExist
+from vprad.helpers import get_generic_foreign_key
 from vprad.views.helpers import get_model_url_name
 from vprad.views.registry import model_views_registry
 from vprad.views.types import ViewType
@@ -54,9 +55,11 @@ class VEmbeddableMixin:
         if local_field_name and local_field_name != '+':
             return {prefix+local_field_name: self.parent_object.pk}
         elif isinstance(parent_field, GenericRelation):
-            return {prefix+parent_field.object_id_field_name: self.parent_object.pk,
-                    prefix+parent_field.content_type_field_name:
-                        ContentType.objects.get_for_model(self.parent_object).pk}
+            gfk = get_generic_foreign_key(parent_field.local_related_fields[0])
+            return {prefix+gfk.name: "%s/%s" % (
+                        ContentType.objects.get_for_model(self.parent_object).pk,
+                        self.parent_object.pk)
+                    }
 
     # noinspection PyUnresolvedReferences
     def dispatch(self, request, *args, **kwargs):
