@@ -4,12 +4,15 @@ import typing as t
 from collections import OrderedDict
 from inspect import isclass
 from itertools import chain
+from urllib.parse import urlencode
 
 from django.contrib.contenttypes.fields import GenericRelation
+from django.contrib.contenttypes.models import ContentType
 from django.db import models
 from django.utils.decorators import classonlymethod
 from django.views import View
 
+from vprad.actions import actions_registry, ActionDoesNotExist
 from vprad.views.helpers import get_model_url_name
 from vprad.views.registry import model_views_registry
 from vprad.views.types import ViewType
@@ -43,6 +46,17 @@ class VEmbeddableMixin:
             return parent_field.field.name
         except AttributeError:
             return parent_field.remote_field.name
+
+    def get_local_kwargs_to_parent(self, prefix=''):
+        """ Get the kwargs for a .create or .filter to reach the parent. """
+        parent_field = self.get_parent_field()
+        local_field_name = self.get_local_field_name()
+        if local_field_name and local_field_name != '+':
+            return {prefix+local_field_name: self.parent_object.pk}
+        elif isinstance(parent_field, GenericRelation):
+            return {prefix+parent_field.object_id_field_name: self.parent_object.pk,
+                    prefix+parent_field.content_type_field_name:
+                        ContentType.objects.get_for_model(self.parent_object).pk}
 
     # noinspection PyUnresolvedReferences
     def dispatch(self, request, *args, **kwargs):
@@ -115,7 +129,15 @@ class VEmbeddableMixin:
         return '?%s=%s' % (EMBEDDABLE_GET_PARAM, cls.name)
 
     def create_url(self):
-        raise NotImplementedError()
+        next_url = self.request.path
+        kwargs = self.get_local_kwargs_to_parent(prefix='_method-')
+        otherside = self.get_local_field_name()
+        try:
+            # TODO: check that the create action is available
+            url = actions_registry.find_cls_action(self.model, 'create').get_absolute_url(next_url=next_url)
+            return url + '&' + urlencode(kwargs)
+        except ActionDoesNotExist:
+            return ''
 
     def moreinfo_url(self):
         raise NotImplementedError()

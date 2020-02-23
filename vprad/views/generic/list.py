@@ -1,3 +1,5 @@
+from urllib.parse import urlencode
+
 import django_tables2 as tables
 from django.core.exceptions import ImproperlyConfigured
 from django.urls import reverse, NoReverseMatch
@@ -70,14 +72,6 @@ class VEmbeddableListView(VEmbeddableMixin, VListViewBase):
         kwargs = super().get_filterset_kwargs(filterset_class)
         kwargs['prefix'] = 'embed_filter_' + self.name
         return kwargs
-
-    def create_url(self):
-        local = self.get_local_field_name()
-        try:
-            return reverse(get_model_url_name(self.model, 'create')) + '?%s=%s' % (local,
-                                                                                   self.parent_object.pk)
-        except NoReverseMatch:
-            return ''
 
     def moreinfo_url(self):
         local = self.get_local_field_name()
